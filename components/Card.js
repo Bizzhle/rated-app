@@ -1,9 +1,10 @@
-import { CardInfo } from "../styles";
+import { CardInfo, CardDiv } from "../styles";
 
 import Link from "next/link";
 import styled from "@emotion/styled";
 
 const Card = ({ value }) => {
+  console.log(value);
   // const [itemDetail, setItemDetail] = useState([]);
 
   // async function getData() {
@@ -17,25 +18,13 @@ const Card = ({ value }) => {
   // }, [id]);
 
   return (
-    <CardDiv>
-      <Link href={`/itemx/${value._id}`}>
-        <li>{value.title}</li>
-      </Link>
-    </CardDiv>
+    <Link href={`/itemx/${value._id}`}>
+      <CardDiv>
+        <p>{value.title}</p>
+        <p>{value.category[0].name}</p>
+      </CardDiv>
+    </Link>
   );
 };
-
-const CardDiv = styled.div`
-  font-size: 18px;
-  :hover {
-    background-color: blue;
-    color: white;
-  }
-
-  li {
-    padding: 8px;
-    margin: 10px 0;
-  }
-`;
 
 export default Card;

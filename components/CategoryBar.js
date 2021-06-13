@@ -6,13 +6,16 @@ const CategoryBar = () => {
   return (
     <Bar>
       <ul>
-        <li>
-          <Link href="/category_list">CATEGORIES</Link>
-        </li>
+        <Link href="/category_list">
+          <li>CATEGORIES</li>
+        </Link>
+        <Link href="/">
+          <li>ITEMS</li>
+        </Link>
 
-        <li>
-          <Link href="/store_list">STORES</Link>
-        </li>
+        <Link href="/store_list">
+          <li>STORES</li>
+        </Link>
       </ul>
     </Bar>
   );
@@ -20,23 +23,34 @@ const CategoryBar = () => {
 
 const Bar = styled.div`
   /* border: 3px solid #d6d1ce; */
-  background-color: white;
-  color: #0a0213;
-  border-radius: 5px;
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  background-color: black;
+  /* border-bottom: 1px solid black; */
+
+  color: white;
+
+  /* box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow); */
 
   ul {
     list-style-type: none;
-    padding: 10px;
+    padding: 0px;
     margin: 0;
     text-align: center;
     display: flex;
     justify-content: space-around;
     font-weight: 700;
     font-size: 15px;
-    /* grid-gap: 10px;
-    grid-template-columns: 1fr 1fr 1fr; */
+
+    li {
+      border: 1px solid white;
+      width: 100%;
+      padding: 10px 0;
+
+      &:hover,
+      &:focus {
+        background-color: blue;
+      }
+    }
   }
 `;
 

@@ -27,7 +27,10 @@ exports.category_detail = function (req, res, next) {
         Category.findById(req.params.id).exec(callback);
       },
       category_items: function (callback) {
-        Item.find({ category: req.params.id }).exec(callback);
+        Item.find({ category: req.params.id })
+          .populate("store")
+          .populate("category")
+          .exec(callback);
       },
     },
     function (err, results) {
@@ -68,8 +71,7 @@ exports.category_create_post = [
 
     if (!errors.isEmpty()) {
       //There are errors . Render the form again with sanitized values/error messages.
-      res.json("category_form", {
-        title: "Create Category",
+      res.status(400).json({
         category: category,
         errors: errors.array(),
       });
@@ -92,7 +94,7 @@ exports.category_create_post = [
               return next(err);
             }
             //category is saved
-            res.redirect(category.url);
+            res.status(201).send(category.url);
           });
         }
       });

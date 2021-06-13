@@ -1,30 +1,38 @@
 import React, { useState } from "react";
-// import { useForm } from "react-hook-form";
-import styled from "@emotion/styled";
-import { Form } from "../../styles";
+import axios from "axios";
+import { BASE_API_URL } from "../../pages/api/constants";
 
-const ItemForm = () => {
-  const [item, setItem] = useState("");
+import { Form, Main } from "../../styles";
+
+const ItemForm = ({ storeList, categoryList }) => {
+  const [storeItems, setStoreItems] = useState(storeList);
+
+  const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [store, setStore] = useState("");
   const [rating, setRating] = useState("");
   const [comment, setComment] = useState("");
-  // const {
-  //   register,
-  //   formState: { errors },
-  //   handleSubmit,
-  // } = useForm();
 
-  // const handleChange = (e) => {
-  //   setValue(e.target.value);
-  //   // console.log("i changed");
-  //   console.log(e.target.value);
-  // };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ item, category, store, rating, comment });
-    setItem("");
+    console.log("tried to submit");
+
+    try {
+      const res = await axios.post(`${BASE_API_URL}/catalog/item/create`, {
+        title,
+        category,
+        store,
+        rating,
+        comment,
+      });
+      console.log(res);
+    } catch (err) {
+      if (err.response) {
+        err.response.data;
+        console.log(err.response.data);
+      }
+    }
+    setTitle("");
     setCategory("");
     setStore("");
     setRating("");
@@ -40,64 +48,71 @@ const ItemForm = () => {
             <label htmlFor="itemName">Item Name:</label>
             <input
               type="text"
-              value={item}
+              name="title"
+              value={title}
               placeholder="Enter name of item"
               autoComplete="off"
-              onChange={(e) => setItem(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
               required
-
-              // {...register("itemName", {
-              //   required: true,
-              //   maxLength: 30,
-              //   pattern: {
-              //     value: /^[a-zA-Z0-9]+$/,
-              //     message: "invalid item name",
-              //   },
-              // })}
             />
-            {/* {errors.itemName?.type === "required" && "Item name is required"} */}
           </div>
 
           <div>
             <label htmlFor="itemName">Select Category:</label>
             <select
               value={category}
+              name="category"
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="-">Select a category</option>
-              <option value="Wine">Wine</option>
-              <option value="Vegetable">Vegetable</option>
-              <option value="Spice">Spice</option>
-              <option value="Cheese">Cheese</option>
+              <option value="">Select a category</option>
+              {categoryList.map((value, index) => {
+                return (
+                  <option key={index} value={value._id}>
+                    {value.name}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
           <div>
             <label htmlFor="itemName">Select Store:</label>
 
-            <select value={store} onChange={(e) => setStore(e.target.value)}>
-              <option value="-">Select a store</option>
-              <option value="aldi">Aldi</option>
-              <option value="lidl">Lidl</option>
-              <option value="rewe">Rewe</option>
-              <option value="otto">Otto</option>
+            <select
+              value={store}
+              name="store"
+              onChange={(e) => setStore(e.target.value)}
+            >
+              <option value="">select a store</option>
+              {storeItems.map((value, index) => {
+                return (
+                  <option key={index} value={value._id}>
+                    {value.name}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
           <div>
             <label htmlFor="itemName">Select a rating:</label>
 
-            <select value={rating} onChange={(e) => setRating(e.target.value)}>
-              <option value="-">chose a rating</option>
-              <option value="bad">Bad</option>
-              <option value="good">Good</option>
-              <option value="verygood">Very Good</option>
-              <option value="excellent">Excellent</option>
+            <select
+              value={rating}
+              name="rating"
+              onChange={(e) => setRating(e.target.value)}
+            >
+              <option value="">chose a rating</option>
+              <option value="Bad">Bad</option>
+              <option value="Good">Good</option>
+              <option value="Very Good">Very Good</option>
+              <option value="Excellent">Excellent</option>
             </select>
           </div>
 
           <textarea
             placeholder="write a comment"
+            name="comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />

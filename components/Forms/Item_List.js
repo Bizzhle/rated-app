@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
-import Navbar from "../Navbar";
-import Link from "next/link";
-import styled from "@emotion/styled";
-import { Main, List, Button } from "../../styles";
-import { BASE_API_URL } from "../../pages/api/constants";
-import axios from "axios";
-import { useRouter } from "next/router";
-import Card from "../Card";
-import CategoryBar from "../CategoryBar";
 
-const Item_List = ({ itemList }) => {
-  console.log(itemList);
+import Link from "next/link";
+
+import { Main, List, Button } from "../../styles";
+
+import Card from "../Card";
+
+const Item_List = ({ children, itemList }) => {
+  const [state, setstate] = useState(itemList);
+  console.log(state);
   // const router = useRouter();
   // const { id } = router.query;
   // const [itemList, setItemList] = useState([]);
@@ -27,30 +25,16 @@ const Item_List = ({ itemList }) => {
 
   return (
     <div>
+      <h1>Items</h1>
       <List>
-        <h2>Item List</h2>
         {itemList &&
           itemList.map((value, index) => {
             return <Card key={index} value={value} />;
           })}
       </List>
-
-      {/* <Link href="/category_form">
-          <Button>add a new item</Button>
-        </Link> */}
+      {children}
     </div>
   );
 };
 
 export default Item_List;
-
-// export const getServerSideProps = async (context) => {
-//   const res = await axios.get(`${BASE_API_URL}/catalog/items`);
-//   const itemList = await res.data;
-
-//   return {
-//     props: {
-//       itemList,
-//     },
-//   };
-// };

@@ -29,23 +29,35 @@ const Item_Detail = ({ itemDetail }) => {
   //   };
   // }, [id]);
 
+  function getArray(obj) {
+    let itemArray = [];
+
+    obj.forEach(function (item) {
+      itemArray.push(
+        <span key={Math.random()} className="px-1">
+          {item.name}
+        </span>
+      );
+    });
+    return itemArray;
+  }
+
   return (
-    <Main>
-      <Navbar />
+    <>
       <div>
-        <h2>{itemDetail.results.title}</h2>
+        <h2>{itemDetail.title}</h2>
         <CardInfo>
-          <h3>{itemDetail.results.title}</h3>
-          <p>{itemDetail.results.rating}</p>
+          <h3>{itemDetail.title}</h3>
+          <p>{itemDetail.rating}</p>
           <span>
-            <p>{itemDetail.results.category}</p>
-            <p>{itemDetail.results.store}</p>
+            <p>{itemDetail.category[0].name}</p>
+            <p>{itemDetail.store[0].name}</p>
           </span>
 
-          <p>comment</p>
+          <p>{itemDetail.comment}</p>
         </CardInfo>
       </div>
-    </Main>
+    </>
   );
 };
 

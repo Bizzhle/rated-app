@@ -1,23 +1,35 @@
 import { useState } from "react";
-// import { useForm } from "react-hook-form";
-import styled from "@emotion/styled";
-import Navbar from "../Navbar";
 import { Main, Form } from "../../styles";
+import { BASE_API_URL } from "../../pages/api/constants";
+import axios from "axios";
 
 const Category_Form = () => {
-  const [category, setCategory] = useState([]);
+  const [name, setName] = useState([]);
+  console.log(name);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const res = await axios.post(`${BASE_API_URL}/catalog/category/create`, {
+        name,
+      });
+      console.log(res);
+    } catch (err) {
+      if (err.response) {
+        err.response.data;
+        console.log("err", err.response.data);
+      }
+    }
+    setName("");
   };
 
   const handleChange = (e) => {
-    setCategory(e.target.value);
+    setName(e.target.value);
   };
 
   return (
-    <Main>
-      <Navbar />
+    <>
       <h1>Create a category</h1>
       <Form>
         <form onSubmit={handleSubmit}>
@@ -25,17 +37,19 @@ const Category_Form = () => {
             <label htmlFor="category">Category:</label>
             <input
               type="text"
-              value={category}
+              name="name"
+              value={name}
               placeholder="Enter a new category"
               autoComplete="off"
               onChange={handleChange}
+              required
             />
           </div>
 
           <button type="submit">submit</button>
         </form>
       </Form>
-    </Main>
+    </>
   );
 };
 

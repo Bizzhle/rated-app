@@ -34,27 +34,32 @@ exports.index = function (req, res) {
 
 // display list of all items
 exports.item_list = function (req, res, next) {
-  Item.find({}, "title").exec(function (err, list_items) {
-    if (err) {
-      return next(err);
-    }
-    res.status(200).json(list_items);
-  });
+  Item.find({}, "title category")
+    .populate("category")
+    .exec(function (err, list_items) {
+      if (err) {
+        return next(err);
+      }
+      res.status(200).json(list_items);
+    });
 };
 
 // Display detail page for a specific item.
 exports.item_detail = function (req, res, next) {
-  Item.findById(req.params.id).exec(function (err, results) {
-    if (err) {
-      return next(err);
-    }
+  Item.findById(req.params.id)
+    .populate("category")
+    .populate("store")
+    .exec(function (err, results) {
+      if (err) {
+        return next(err);
+      }
 
-    res.status(200).send({ results: results });
-  });
+      res.status(200).send(results);
+    });
 };
 
 // create form on GET.
-exports.item_create_get = function (req, res) {
+exports.item_create_get = function (req, res, next) {
   async.parallel(
     {
       categories: function (callback) {
@@ -66,9 +71,8 @@ exports.item_create_get = function (req, res) {
     },
     function (err, results) {
       if (err) return next(err);
-      res.json("item_form", {
-        title: "Add Item",
-        categories: results.catgories,
+      res.status(201).send({
+        categories: results.categories,
         stores: results.stores,
       });
     }
@@ -77,16 +81,16 @@ exports.item_create_get = function (req, res) {
 
 // create form on Post
 exports.item_create_post = [
-  // Convert the category to an array
+  //Convert the category to an array
   (req, res, next) => {
     if (!(req.body.category instanceof Array)) {
-      if (typeof req.body.category === "undefined") req.body.store = [];
+      if (typeof req.body.category === "undefined") req.body.category = [];
       else req.body.category = new Array(req.body.category);
     }
     next();
   },
 
-  // Convert the store to an array
+  //Convert the store to an array
   (req, res, next) => {
     if (!(req.body.store instanceof Array)) {
       if (typeof req.body.store === "undefined") req.body.store = [];
@@ -94,37 +98,39 @@ exports.item_create_post = [
     }
     next();
   },
-
   // // Validate and sanitize fields.
   body("title", "Title must not be empty.")
     .trim()
     .isLength({ min: 2 })
     .escape(),
-  body("category.*").escape(),
-  body("store.*").escape(),
-  body("rating", "rating must be selected").trim().escape(),
   body("comment", "Comment must not be empty.")
     .trim()
     .isLength({ min: 2 })
     .escape(),
-  // Process request after validation and sanitization
+  body("category", "must be selected").trim().isLength({ min: 2 }).escape(),
+  body("store", "must be selected").trim().isLength({ min: 2 }).escape(),
+  body("rating", "rating must be selected")
+    .trim()
+    .isLength({ min: 2 })
+    .escape(),
 
+  // // Process request after validation and sanitization
   (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
     // Create a Item object with escaped and trimmed data.
+
     const item = new Item({
       title: req.body.title,
+      comment: req.body.comment,
       category: req.body.category,
       store: req.body.store,
-      comment: req.body.comment,
       rating: req.body.rating,
     });
 
     if (!errors.isEmpty()) {
       // There are errors. json form again with sanitized values/error messages.
-
       // Get all categories and stores for form
       async.parallel(
         {
@@ -139,22 +145,19 @@ exports.item_create_post = [
           if (err) {
             return next(err);
           }
-
           // Mark our selected genres as checked.
-          for (let i = 0; i < results.categories.length; i++) {
-            if (item.category.indexOf(results.categories[i]._id) > -1) {
-              results.categories[i].selected = "true";
-            }
-          }
-
-          // Mark our selected genres as checked.
-          for (let i = 0; i < results.stores.length; i++) {
-            if (item.store.indexOf(results.stores[i]._id) > -1) {
-              results.stores[i].selected = "true";
-            }
-          }
-          res.json("item_form", {
-            title: "Create Item",
+          // for (let i = 0; i < results.categories.length; i++) {
+          //   if (item.category.indexOf(results.categories[i]._id) > -1) {
+          //     results.categories[i].selected = "true";
+          //   }
+          // }
+          // // Mark our selected genres as checked.
+          // for (let i = 0; i < results.stores.length; i++) {
+          //   if (item.store.indexOf(results.stores[i]._id) > -1) {
+          //     results.stores[i].selected = "true";
+          //   }
+          // }
+          res.status(400).send({
             categories: results.categories,
             stores: results.stores,
             item: item,
@@ -170,12 +173,10 @@ exports.item_create_post = [
           return next(err);
         }
         // Successful - redirect to new book record.
-        res.redirect(item.url);
+        res.status(201).send(item.url);
       });
     }
   },
-
-  // res.send("Not Implemented: Item create POST");
 ];
 
 // "Routes" to forward the supported requests (and any information encoded in request URLs) to the appropriate controller functions.

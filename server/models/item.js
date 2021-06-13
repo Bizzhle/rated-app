@@ -7,7 +7,7 @@ const ItemSchema = Schema({
   comment: { type: String, required: true },
   category: [{ type: Schema.ObjectId, ref: "Category" }],
   store: [{ type: Schema.ObjectId, ref: "Store" }],
-  rating: { type: String, required: true },
+  rating: [{ type: String, required: true }],
 });
 
 ItemSchema.virtual("url").get(function () {

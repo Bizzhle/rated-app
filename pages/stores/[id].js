@@ -5,11 +5,11 @@ import { BASE_API_URL } from "../api/constants";
 
 const store_details = ({ storeDetail }) => {
   console.log(storeDetail);
-  return <Store_Detail />;
+  return <Store_Detail storeDetail={storeDetail} />;
 };
 
 export const getServerSideProps = async (context) => {
-  console.log("fetching for category");
+  console.log("fetching for stores");
 
   const res = await axios.get(
     `${BASE_API_URL}/catalog/store/${context.params.id}`

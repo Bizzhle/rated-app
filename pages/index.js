@@ -1,9 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
-import CategoryBar from "../components/CategoryBar";
 import Item_List from "../components/Forms/Item_List";
-import Homepage from "../components/Homepage";
-import Navbar from "../components/Navbar";
+
 import NewItem from "../components/NewItem";
 import { Main } from "../styles";
 import styles from "../styles/Home.module.css";
@@ -20,19 +18,16 @@ export default function Home({ itemList }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Main>
-        <>
-          <Navbar />
-          <CategoryBar />
-          <NewItem />
-        </>
+      <>
+        {/* <NewItem itemList={itemList} /> */}
+
         <Item_List itemList={itemList} />
-      </Main>
+      </>
     </div>
   );
 }
 
-export const getServerSideProps = async (context) => {
+export const getStaticProps = async (context) => {
   const res = await axios.get(`${BASE_API_URL}/catalog/items`);
   const itemList = await res.data;
 

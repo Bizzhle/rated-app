@@ -2,10 +2,11 @@ import React from "react";
 import Link from "next/link";
 import styled from "@emotion/styled";
 
-const NewItem = () => {
+const NewItem = ({ itemList }) => {
+  console.log(itemList);
   return (
-    <Button>
-      <Link href="/createitempage">
+    <Button itemList={itemList}>
+      <Link href="/item_form">
         <p>Add a new Item</p>
       </Link>
     </Button>
@@ -17,7 +18,7 @@ const Button = styled.div`
   padding: 0;
   margin-top: 12px;
   text-align: center;
-  background-color: orange;
+  background-color: #4e66f4;
   color: white;
   border-radius: 5px;
 

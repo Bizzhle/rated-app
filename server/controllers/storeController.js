@@ -30,7 +30,10 @@ exports.store_detail = function (req, res, next) {
         Store.findById(req.params.id).exec(callback);
       },
       store_items: function (callback) {
-        Item.find({ category: req.params.id }, "name").exec(callback);
+        Item.find({ store: req.params.id })
+          .populate("store")
+          .populate("category")
+          .exec(callback);
       },
     },
     function (err, results) {
@@ -71,12 +74,11 @@ exports.store_create_post = [
 
     if (!errors.isEmpty()) {
       //There are errors . Render the form again with sanitized values/error messages.
-      // res.json("store_form", {
-      //   title: "Create store",
-      //   store: store,
-      //   errors: errors.array(),
-      // });
-      res.status(201).send(store);
+
+      res.status(400).json({
+        store: store,
+        errors: errors.array(),
+      });
       return;
     } else {
       // Data from form is valid
@@ -86,14 +88,14 @@ exports.store_create_post = [
 
         if (found_store) {
           // store exists, redirect to its store page
-          res.redirect(found_store.url);
+          res.status(200, "store already exists").send(found_store.url);
         } else {
           store.save(function (err) {
             if (err) {
               return next(err);
             }
             //store is saved
-            res.redirect(store.url);
+            res.status(201).send(store.url);
           });
         }
       });
